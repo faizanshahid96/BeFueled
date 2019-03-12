@@ -1,2 +1,2 @@
 #My FYP#
-This is my computer science FYPjjj
+This is my computer science FYP
