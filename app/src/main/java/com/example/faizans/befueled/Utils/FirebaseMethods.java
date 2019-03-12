@@ -65,7 +65,7 @@ public class FirebaseMethods {
      * @param phone
      * @param lastname
      */
-    public void registerNewEmail(final String email, final String firstname, String password, String phone, String lastname){
+    public void registerNewEmail(final String email, final String firstname, String password, long phone, String lastname){
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -102,7 +102,7 @@ public class FirebaseMethods {
      * @param lastname
      * @param phone
      */
-    public void addNewUser(String email,String firstname, String lastname, String phone){
+    public void addNewUser(String email,String firstname, String lastname, long phone){
         User user = new User(userID,phone,email,firstname,lastname);
         myRef.child(mContext.getString(R.string.dbname_users))
                 .child(userID)

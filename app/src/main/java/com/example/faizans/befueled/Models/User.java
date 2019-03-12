@@ -2,13 +2,13 @@ package com.example.faizans.befueled.Models;
 
 public class User {
     private String user_id;
-    private String phone;
+    private long phone;
     private String email;
     private String firstname;
     private String lastname;
 
 
-    public User(String user_id, String phone, String email, String firstname, String lastname) {
+    public User(String user_id, long phone, String email, String firstname, String lastname) {
         this.user_id = user_id;
         this.phone = phone;
         this.email = email;
@@ -29,11 +29,11 @@ public class User {
         this.user_id = user_id;
     }
 
-    public String getPhone() {
+    public long getPhone() {
         return phone;
     }
 
-    public void setPhone(String phone) {
+    public void setPhone(long phone) {
         this.phone = phone;
     }
 

@@ -28,7 +28,7 @@ public class SignUp extends AppCompatActivity {
     private static final String TAG = "";
     private EditText mFirstname, mLastname, mEmail, mPhone, mPassword;
     private String firstname, lastname, email, password;
-    private String phone;
+    private long phone;
     private Button mBtnRegister;
     private Context mContext;
     private FirebaseAuth mAuth;
@@ -84,13 +84,11 @@ public class SignUp extends AppCompatActivity {
         password = mPassword.getText().toString();
         firstname = mFirstname.getText().toString();
         lastname = mLastname.getText().toString();
-//        String str = mPhone.getText().toString();
-        phone =  mPhone.getText().toString();
+        String str = mPhone.getText().toString();
+        phone =  Long.parseLong(str);
 //        Toast.makeText(mContext, "Values "+ email+" "+password+" "+firstname+" "+lastname+" "+phone
 //                ,Toast.LENGTH_SHORT).show();
         if (checkInputs(email, firstname, password, phone, lastname)) {
-            final ProgressDialog dialog = ProgressDialog.show(SignUp.this, "",
-                    "Registering. Please wait...", true);
             mFirebaseMethods.registerNewEmail(email, firstname, password, phone, lastname);
         }
 
@@ -141,9 +139,10 @@ public class SignUp extends AppCompatActivity {
     }
 
 
-    private boolean checkInputs(String email, String firstname, String password, String phone, String lastname) {
+    private boolean checkInputs(String email, String firstname, String password, long phone, String lastname) {
         Log.d(TAG, "checkInputs: checking inputs for null values.");
-        if (email.equals("") || firstname.equals("") || lastname.equals("") || password.equals("")) {
+        String sphone  = phone + "";
+        if (email.equals("") || firstname.equals("") || lastname.equals("") || password.equals("") || sphone.equals("")) {
             Toast.makeText(mContext, "All fields must be filled out.1 "+ email+" "+password+" "+firstname+" "+lastname+" "+phone
                     ,Toast.LENGTH_SHORT).show();
             return false;
@@ -159,6 +158,9 @@ public class SignUp extends AppCompatActivity {
     public void mainactivity(View view) {
 //        Intent intent = new Intent(this,MainActivity.class);
 //        startActivity(intent);
+        final ProgressDialog dialog = ProgressDialog.show(SignUp.this, "",
+                "Registering. Please wait...", true);
         init();
+//        dialog.dismiss();
     }
 }
