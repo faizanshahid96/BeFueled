@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.faizans.befueled.Models.UserLocation;
 import com.example.faizans.befueled.R;
@@ -30,9 +31,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import static com.example.faizans.befueled.Constants.MAPVIEW_BUNDLE_KEY;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback,
-        GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     private static final String TAG = "UserListFragment";
 
@@ -43,6 +42,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
     private LatLngBounds mMapBoundary;
     private UserLocation mUserPosition;
     GoogleApiClient mClient;
+    LatLng mLatLng;
     LocationRequest mRequest;
     //vars
 
@@ -152,64 +152,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback,
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-
-        mClient = new GoogleApiClient.Builder(getActivity())
-                .addApi(LocationServices.API)
-                .addOnConnectionFailedListener(this)
-                .build();
-        mClient.connect();
-
-//        LatLng sydney = new LatLng(-34,151);
-//        map.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-//        map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-
-
-//        map.setMyLocationEnabled(true);
-//        mGoogleMap = map;
-
-    }
-
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        mRequest = new LocationRequest().create();
-        mRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        mRequest.setInterval(1000);
-
-//        if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mClient, mRequest, (com.google.android.gms.location.LocationListener) this);
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
 
     }
 }
