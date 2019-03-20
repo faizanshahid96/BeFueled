@@ -45,7 +45,7 @@ public class SignUp extends AppCompatActivity {
         //         Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 //         [END initialize_auth]
-
+        mAuth.signOut();
         ActivitySignUpBinding activitySignUpBinding = DataBindingUtil
                 .setContentView(this, R.layout.activity_sign_up);
         activitySignUpBinding.setActivitySignup(this);
