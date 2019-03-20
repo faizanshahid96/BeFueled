@@ -31,20 +31,19 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import static com.example.faizans.befueled.Constants.MAPVIEW_BUNDLE_KEY;
 
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private static final String TAG = "UserListFragment";
 
     //widgets
 
     private MapView mMapView;
-    private GoogleMap mGoogleMap;
-    private LatLngBounds mMapBoundary;
-    private UserLocation mUserPosition;
-    GoogleApiClient mClient;
-    LatLng mLatLng;
-    LocationRequest mRequest;
+
     //vars
+    GoogleApiClient mGoogleApiClient;
+    Location mLastLocation;
+    LocationRequest mLocationRequest;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -152,6 +151,42 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        map.setMyLocationEnabled(true);
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 }
