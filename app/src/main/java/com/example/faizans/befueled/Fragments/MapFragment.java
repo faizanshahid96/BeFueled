@@ -185,8 +185,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             public void onSuccess(Location location) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(19));
-                Log.d(TAG, "mFusedLongitude" + location.getLongitude());
-                Log.d(TAG, "mFusedLatitude" + location.getLatitude());
             }
         });
         map.setMyLocationEnabled(true);
