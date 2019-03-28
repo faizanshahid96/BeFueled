@@ -23,6 +23,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.net.PlacesClient;
+
+
 import com.example.faizans.befueled.Adapters.SectionsStatePagerAdapter;
 import com.example.faizans.befueled.Fragments.MapFragment;
 import com.google.android.gms.common.ConnectionResult;
@@ -225,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
                 FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
                 transaction.replace(R.id.fragment_container, new SettingFragment());
-//                transaction.addToBackStack("fragment_container");
+                transaction.addToBackStack("fragment_container");
                 transaction.commit();
 
                 drawer.closeDrawer(GravityCompat.START);

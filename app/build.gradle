@@ -29,11 +29,8 @@ dependencies {
     //material design
     //implementation 'com.google.android.material:material:1.0.0'
     //facebook login
-
     implementation 'com.android.support:cardview-v7:28.0.0'
     implementation 'com.android.support:design:28.0.0'
-
-
     implementation 'com.google.firebase:firebase-auth:16.2.0'
     implementation 'com.google.firebase:firebase-database:16.1.0'
     implementation 'com.android.support:support-v4:28.0.0'
@@ -43,10 +40,11 @@ dependencies {
     //firebase
     implementation 'com.google.firebase:firebase-core:16.0.8'
     implementation 'com.google.firebase:firebase-firestore:18.1.0'
-
     //
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-maps:16.1.0'
-
+    implementation 'com.google.android.gms:play-services-places:15.0.0'
+    implementation 'com.firebase:geofire-android:2.3.1'
+    implementation 'com.google.android.libraries.places:places:1.0.0'
 }
 apply plugin: 'com.google.gms.google-services'

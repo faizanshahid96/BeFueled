@@ -24,5 +24,6 @@
     <string name="fragment_map">Maps</string>
     <!--firebase-->
     <string name="dbname_users">users</string>
-    <string name="google_map_api_key">AIzaSyDUOS2HZ00SDHtCcLjr9F35oGaWvHJ-x_s</string>
+    <!--<string name="google_map_api_key">AIzaSyAQOf62LKuJRYliJed5mNUw2e7E5VLQOpI</string>-->
+    <string name="google_map_api_key">AIzaSyBvR07aFM-1ddGVgt392lRnUge3weT6nUY</string>
 </resources>
