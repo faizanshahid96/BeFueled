@@ -13,8 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.faizans.befueled.R;
@@ -30,7 +28,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.util.concurrent.Executor;
 
 import static com.example.faizans.befueled.Constants.MAPVIEW_BUNDLE_KEY;
 
@@ -39,25 +36,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
     private static final String TAG = "UserListFragment";
-    private static final int PICKUP_PLACE_PICKER_REQUEST = 1;
-    private final static int DROPOFF_PLACE_PICKER_REQUEST = 998;
-    //widgets
-    int PLACE_PICKER_REQUEST = 1;
     //vars
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
 
-    GoogleMap.OnCameraIdleListener onCameraIdleListener;
-    ImageView pinButton;
     private MapView mMapView;
-    private double lat = 0;
-    private double lng = 0;
+
     private GoogleMap mMap;
-    private double pickupLat;
-    private String pickupAddress = "";
-    private double pickUpLon;
-    private Button pickUpBtn;
     private FusedLocationProviderClient mFusedLocationClient;
 
     public static MapFragment newInstance() {
