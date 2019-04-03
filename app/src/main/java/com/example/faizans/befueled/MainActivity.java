@@ -23,9 +23,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.net.PlacesClient;
+import com.example.faizans.befueled.Fragments.SettingFragment;
 
 
 import com.example.faizans.befueled.Adapters.SectionsStatePagerAdapter;
@@ -39,9 +37,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.GeoPoint;
 
-import static com.example.faizans.befueled.Constants.ERROR_DIALOG_REQUEST;
-import static com.example.faizans.befueled.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
-import static com.example.faizans.befueled.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
+import static com.example.faizans.befueled.Utils.Constants.ERROR_DIALOG_REQUEST;
+import static com.example.faizans.befueled.Utils.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
+import static com.example.faizans.befueled.Utils.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 

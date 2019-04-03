@@ -1,4 +1,4 @@
-package com.example.faizans.befueled;
+package com.example.faizans.befueled.Utils;
 
 public class Constants {
     public static final int ERROR_DIALOG_REQUEST = 9001;

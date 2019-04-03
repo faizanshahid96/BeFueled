@@ -9,16 +9,21 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.faizans.befueled.R;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,25 +31,33 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
-
-import static com.example.faizans.befueled.Constants.MAPVIEW_BUNDLE_KEY;
+import static com.example.faizans.befueled.Utils.Constants.MAPVIEW_BUNDLE_KEY;
 
 
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, LocationListener {
+        GoogleApiClient.OnConnectionFailedListener, LocationListener, View.OnClickListener {
 
     private static final String TAG = "UserListFragment";
     //vars
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
-
+    Button mBtnfuelrequest;
     private MapView mMapView;
+    private LatLng pickupLocation;
+    private LatLng midLatLng = null;
 
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private int i = 0;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -53,8 +66,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        fusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
-
     }
 
     @Nullable
@@ -62,10 +73,43 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = view.findViewById(R.id.map);
-
+        mBtnfuelrequest = view.findViewById(R.id.btn_fuel_request);
+        mBtnfuelrequest.setOnClickListener(this);
         initGoogleMap(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.btn_fuel_request) {
+            if (midLatLng != null) {
+                Toast.makeText(getActivity(), "pickupLocation: " + midLatLng.latitude
+                        + "lat" + midLatLng.longitude, Toast.LENGTH_SHORT).show();
+            }
+
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+            GeoFire geoFire = new GeoFire(ref);
+
+            geoFire.setLocation(userId, new GeoLocation(midLatLng.latitude, midLatLng.longitude), new GeoFire.CompletionListener() {
+
+                @Override
+                public void onComplete(String key, DatabaseError error) {
+                    Log.d(TAG, "key:" + key);
+
+                }
+            });
+
+            pickupLocation = new LatLng(midLatLng.latitude, midLatLng.longitude);
+            mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here"));
+
+            FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, new FuelRequestFragment());
+            transaction.addToBackStack("fragment_container");
+            transaction.commit();
+        }
     }
 
     @Override
@@ -93,7 +137,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
         mMapView.getMapAsync(this);
     }
-
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -155,14 +198,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-//        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lat, lng), 10));
-
         map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
                 //get latlng at the center by calling
-                LatLng midLatLng = mMap.getCameraPosition().target;
-                Toast.makeText(getActivity(), "Lat is : " + midLatLng.latitude + "\n" + "Lng is : " + midLatLng.longitude, Toast.LENGTH_SHORT).show();
+                midLatLng = mMap.getCameraPosition().target;
+                // Toast.makeText(getActivity(), "Lat is : " + midLatLng.latitude + "\n" + "Lng is : " + midLatLng.longitude, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -178,7 +219,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     }
 
-
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addConnectionCallbacks(this)
@@ -191,6 +231,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("SSSS", "-------------------");
         mLastLocation = location;
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
@@ -221,9 +262,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         Log.d(TAG, "InOnconnected");
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, (com.google.android.gms.location.LocationListener) this);
             return;
         }
+//        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+//            @Override
+//            public void onSuccess(Location location) {
+//                if (location != null) {
+//                    Log.d(TAG, "onSuccess: " + "latitude" + location.getLatitude() + "longitude " + location.getLongitude());
+////                    Toast.makeText(getContext(), ""+ i++ +"latitude"+location.getLatitude(), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//        mLocationCallback = new LocationCallback() {
+//            @Override
+//            public void onLocationResult(LocationResult locationResult) {
+//                for (Location location : locationResult.getLocations()) {
+//                    // Update UI with location data
+//                    Toast.makeText(getContext(), "" + i++ + "latitude" + location.getLatitude(), Toast.LENGTH_SHORT).show();
+//
+//                }
+//            }
+//        };
     }
 
     @Override
@@ -235,4 +294,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+
 }
