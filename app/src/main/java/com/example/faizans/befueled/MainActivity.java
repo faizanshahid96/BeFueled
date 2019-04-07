@@ -257,6 +257,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+
     private void signout() {
         AlertDialog dialog = new AlertDialog.Builder(mContext)
                 .setTitle("Sign Out")
