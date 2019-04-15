@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.faizans.befueled.Models.CustomerCarInfo;
+
 import com.example.faizans.befueled.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -51,6 +51,7 @@ public class FuelRequestFragment extends Fragment implements View.OnClickListene
         userID = mAuth.getCurrentUser().getUid();
         myRef = FirebaseDatabase.getInstance().getReference().child("CustomerCarInformation").child(userID);
         mBtnNext = view.findViewById(R.id.btn_next);
+        Log.d(TAG, "onCreateView:userid " + userID);
         mBtnNext.setOnClickListener(this);
         return view;
     }

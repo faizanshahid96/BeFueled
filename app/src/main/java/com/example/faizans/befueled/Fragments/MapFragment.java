@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.faizans.befueled.R;
+import com.example.faizans.befueled.Utils.FuelRequestInfo;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
@@ -53,7 +54,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private MapView mMapView;
     private LatLng pickupLocation;
     private LatLng midLatLng = null;
-
+    FuelRequestInfo fuelRequestInfo;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
@@ -89,21 +90,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             }
 
             String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            fuelRequestInfo = new FuelRequestInfo(userId, midLatLng);
 
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
-            GeoFire geoFire = new GeoFire(ref);
 
-            geoFire.setLocation(userId, new GeoLocation(midLatLng.latitude, midLatLng.longitude), new GeoFire.CompletionListener() {
+//            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+//            GeoFire geoFire = new GeoFire(ref);
+//
+//            geoFire.setLocation(userId, new GeoLocation(midLatLng.latitude, midLatLng.longitude), new GeoFire.CompletionListener() {
+//
+//                @Override
+//                public void onComplete(String key, DatabaseError error) {
+//                    Log.d(TAG, "key:" + key);
+//
+//                }
+//            });
 
-                @Override
-                public void onComplete(String key, DatabaseError error) {
-                    Log.d(TAG, "key:" + key);
 
-                }
-            });
-
-            pickupLocation = new LatLng(midLatLng.latitude, midLatLng.longitude);
-            mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here"));
+//            pickupLocation = new LatLng(midLatLng.latitude, midLatLng.longitude);
+//            mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here"));
 
             FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, new FuelRequestFragment());
@@ -190,6 +194,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Override
     public void onMapReady(final GoogleMap map) {
         mMap = map;
+
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
         buildGoogleApiClient();
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)
@@ -198,6 +203,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        map.setMyLocationEnabled(true);
         map.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
             @Override
             public void onCameraIdle() {
@@ -214,7 +220,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(19));
             }
         });
-        map.setMyLocationEnabled(true);
 
 
     }

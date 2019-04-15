@@ -24,9 +24,8 @@
     <string name="fragment_map">Maps</string>
     <!--firebase-->
     <string name="dbname_users">users</string>
-    <!--<string name="google_map_api_key">AIzaSyAQOf62LKuJRYliJed5mNUw2e7E5VLQOpI</string>-->
-    <string name="google_map_api_key">AIzaSyBvR07aFM-1ddGVgt392lRnUge3weT6nUY</string>
+    <string name="google_map_api_key">AIzaSyAQOf62LKuJRYliJed5mNUw2e7E5VLQOpI</string>
+    <!--<string name="google_map_api_key">AIzaSyBvR07aFM-1ddGVgt392lRnUge3weT6nUY</string>-->
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>

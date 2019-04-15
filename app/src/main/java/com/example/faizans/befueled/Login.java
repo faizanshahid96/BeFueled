@@ -103,8 +103,6 @@ public class Login extends AppCompatActivity {
         }
         else
             Toast.makeText(mContext, "Fill in the fields", Toast.LENGTH_SHORT).show();
-
-
     }
 }
 
