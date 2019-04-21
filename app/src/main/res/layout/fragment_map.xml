@@ -47,6 +47,7 @@
         android:layout_marginBottom="8dp"
         android:foregroundGravity="bottom"
         app:cardElevation="8dp"
+        app:cardCornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="@+id/frameLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,14 +64,18 @@
                 android:id="@+id/textView8"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="109.3 Rs"
                 android:textSize="20dp" />
 
             <Button
+                android:id="@+id/btn_fuel_request"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/btn_fuel_request"
-                android:text="Bharo" />
+                android:background="@drawable/btn_manage_vehicle"
+                android:text="BHARO"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
 
         </LinearLayout>

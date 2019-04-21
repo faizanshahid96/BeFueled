@@ -17,10 +17,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.faizans.befueled.MainActivity;
 import com.example.faizans.befueled.R;
 import com.example.faizans.befueled.Utils.FuelRequestInfo;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -31,13 +34,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import static com.example.faizans.befueled.Utils.Constants.MAPVIEW_BUNDLE_KEY;
 
@@ -51,14 +57,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     Location mLastLocation;
     LocationRequest mLocationRequest;
     Button mBtnfuelrequest;
+    FuelRequestInfo fuelRequestInfo;
+    FirebaseAuth mAuth;
+    DatabaseReference reference;
     private MapView mMapView;
     private LatLng pickupLocation;
     private LatLng midLatLng = null;
-    FuelRequestInfo fuelRequestInfo;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
     private int i = 0;
+    private boolean mIsOrderPlace;
+    private String mUserID;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -78,8 +88,104 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mBtnfuelrequest.setOnClickListener(this);
         initGoogleMap(savedInstanceState);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+        mAuth = FirebaseAuth.getInstance();
+        mUserID = mAuth.getCurrentUser().getUid();
+        reference = FirebaseDatabase.getInstance().getReference().child("customerRequestInfo")
+                .child(mUserID).child("isorderplaced");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                try {
+                    if (dataSnapshot.getValue(Boolean.class)) {
+
+                        mBtnfuelrequest.setText("On Our Way");
+//                        loadDriverLocation();
+                        mIsOrderPlace = dataSnapshot.getValue(Boolean.class);
+                        mBtnfuelrequest.setClickable(false);
+                        Log.d(TAG, "onDataChange:exception " + dataSnapshot.getValue(Boolean.class) + " " + mIsOrderPlace);
+                    } else {
+
+                        mBtnfuelrequest.setText("BHARO");
+                        mBtnfuelrequest.setClickable(true);
+//                        mIsOrderPlace = false;
+                    }
+                } catch (NullPointerException npe) {
+                    mBtnfuelrequest.setText("BHARO");
+                    mBtnfuelrequest.setClickable(true);
+//                    mIsOrderPlace = false;
+                    Log.d(TAG, "onDataChange:exception " + npe);
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
         return view;
     }
+
+    double radius = 1;
+    boolean isDriverFound = false;
+    String driverId;
+
+
+//    private void loadDriverLocation() {
+//        Log.d(TAG, "loadDriverLocation:In ");
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("driverAvailable");
+//        GeoFire gfdriver = new GeoFire(ref);
+//
+//        GeoQuery geoQuery = gfdriver.queryAtLocation(new GeoLocation(mLastLocation.getLatitude(),mLastLocation.getLongitude()),radius);
+//        geoQuery.removeAllListeners();
+//        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+//            @Override
+//            public void onKeyEntered(String key, GeoLocation location) {
+//                if (!isDriverFound && mIsOrderPlace){
+//                    isDriverFound = true;
+//                    driverId = key;
+//                    Log.d(TAG, "onKeyEntered:driverFound: "+ key);
+////                    Toast.makeText(getContext(), "DriverFound", Toast.LENGTH_SHORT).show();
+//                }
+//                mMap.addMarker(new MarkerOptions()
+//                        .position(new LatLng(location.latitude,location.longitude))
+//                        .flat(true)
+//                        .title("Driver"));
+////                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_truck)));
+//
+//            }
+//
+//            @Override
+//            public void onKeyExited(String key) {
+//
+//            }
+//
+//            @Override
+//            public void onKeyMoved(String key, GeoLocation location) {
+//
+//            }
+//
+//            @Override
+//            public void onGeoQueryReady() {
+//                if (!isDriverFound){
+//                    radius++;
+//                    loadDriverLocation();
+//                }
+//            }
+//
+//            @Override
+//            public void onGeoQueryError(DatabaseError error) {
+//
+//            }
+//        });
+//
+//
+//    }
 
     @Override
     public void onClick(View v) {
@@ -241,6 +347,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(20));
+//        loadDriverLocation();
 
     }
 
@@ -269,6 +376,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+//        loadDriverLocation();
 //        mFusedLocationClient.getLastLocation().addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
 //            @Override
 //            public void onSuccess(Location location) {

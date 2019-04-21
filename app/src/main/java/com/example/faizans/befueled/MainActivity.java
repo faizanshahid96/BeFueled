@@ -69,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
 //        MapFragment mapFragment = MapFragment.newInstance();
 //        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,mapFragment).commit();
         inflateMapFragment();
@@ -128,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         Intent enableGpsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                         startActivityForResult(enableGpsIntent, PERMISSIONS_REQUEST_ENABLE_GPS);
+                        inflateMapFragment();
                     }
                 });
         final AlertDialog alert = builder.create();
@@ -209,6 +211,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 if (mLocationPermissionGranted) {
 //                    getChatrooms();
                     getLastKnownLocation();
+                    inflateMapFragment();
                 } else {
                     getLocationPermission();
                 }
