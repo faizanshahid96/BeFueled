@@ -1,6 +1,8 @@
 package com.example.faizans.befueled.Fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -60,7 +62,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     LocationRequest mLocationRequest;
-    Button mBtnfuelrequest;
+    Button mBtnfuelrequest, mBtnCancelRqst;
     FuelRequestInfo fuelRequestInfo;
     FirebaseAuth mAuth;
     DatabaseReference reference;
@@ -88,7 +90,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_map, container, false);
+        final View view = inflater.inflate(R.layout.fragment_map, container, false);
         mMapView = view.findViewById(R.id.map);
         mBtnfuelrequest = view.findViewById(R.id.btn_fuel_request);
         mBtnfuelrequest.setOnClickListener(this);
@@ -99,18 +101,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
         mAuth = FirebaseAuth.getInstance();
         mUserID = mAuth.getCurrentUser().getUid();
-        reference = FirebaseDatabase.getInstance().getReference().child("customerRequestInfo")
-                .child(mUserID).child("isorderplaced");
-        reference.addValueEventListener(new ValueEventListener() {
+        mBtnCancelRqst = view.findViewById(R.id.btn_cancel);
+        mBtnCancelRqst.setOnClickListener(this);
+        reference = FirebaseDatabase.getInstance().getReference();
+        FirebaseDatabase.getInstance().getReference().child("customerRequestInfo")
+                .child(mUserID).child("isorderplaced").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
                 try {
                     if (dataSnapshot.getValue(Boolean.class)) {
 
                         mBtnfuelrequest.setText("On Our Way");
 //                        loadDriverLocation();
+                        mBtnCancelRqst.setVisibility(view.VISIBLE);
                         mIsOrderPlace = dataSnapshot.getValue(Boolean.class);
                         mBtnfuelrequest.setClickable(false);
                         Log.d(TAG, "onDataChange:exception " + dataSnapshot.getValue(Boolean.class) + " " + mIsOrderPlace);
@@ -118,12 +121,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 
                         mBtnfuelrequest.setText("BHARO");
                         mBtnfuelrequest.setClickable(true);
+                        mBtnCancelRqst.setVisibility(view.INVISIBLE);
 //                        mIsOrderPlace = false;
                     }
                 } catch (NullPointerException npe) {
                     mBtnfuelrequest.setText("BHARO");
                     mBtnfuelrequest.setClickable(true);
 //                    mIsOrderPlace = false;
+                    mBtnCancelRqst.setVisibility(view.INVISIBLE);
                     Log.d(TAG, "onDataChange:exception " + npe);
                 }
             }
@@ -235,6 +240,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
             transaction.addToBackStack("fragment_container");
             transaction.commit();
         }
+        if (v.getId() == R.id.btn_cancel) {
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("Are you sure you want to cancel this request?")
+                    .setCancelable(true)
+                    .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //do things
+                            reference.child("customerRequestInfo").child(mUserID).removeValue(null);
+                            reference.child("customerRequest").child(mUserID).removeValue(null);
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
+
+        }
+
+
+
     }
 
     @Override

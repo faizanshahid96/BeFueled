@@ -8,5 +8,5 @@
     <!--<color name="transparent">#0000000</color>-->
     <color name="gradStart">#19AA8B</color>
     <color name="gradStop">#472796</color>
-
+    <color name="Grey">#c3c3c3</color>
 </resources>
