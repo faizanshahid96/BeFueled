@@ -76,6 +76,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
     private boolean mIsOrderPlace = false;
     private String mUserID;
     private TextView textFuelprice;
+    double radius = 1;
+    boolean isDriverFound = false;
+    private String driverId;
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -120,6 +123,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     } else {
 
                         mBtnfuelrequest.setText("BHARO");
+                        mMap.clear();
                         mBtnfuelrequest.setClickable(true);
                         mBtnCancelRqst.setVisibility(view.INVISIBLE);
 //                        mIsOrderPlace = false;
@@ -128,6 +132,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
                     mBtnfuelrequest.setText("BHARO");
                     mBtnfuelrequest.setClickable(true);
 //                    mIsOrderPlace = false;
+                    mMap.clear();
                     mBtnCancelRqst.setVisibility(view.INVISIBLE);
                     Log.d(TAG, "onDataChange:exception " + npe);
                 }
@@ -143,67 +148,63 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         return view;
     }
 
-    double radius = 1;
-    boolean isDriverFound = false;
-    String driverId;
 
-
-    private void loadDriverLocation() {
-
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("driverAvailable");
-        GeoFire gfdriver = new GeoFire(ref);
-        Log.d(TAG, "loadDriverLocation:In " + mLastLocation);
-        GeoQuery geoQuery = gfdriver.queryAtLocation(new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), radius);
-        geoQuery.removeAllListeners();
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                if (!isDriverFound) {
-                    isDriverFound = true;
-                    driverId = key;
-                    Log.d(TAG, "onKeyEntered:driverFound: " + key);
-//                    Toast.makeText(getContext(), "DriverFound", Toast.LENGTH_SHORT).show();
-                    int height = 100;
-                    int width = 100;
-                    BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_truck);
-                    Bitmap b = bitmapdraw.getBitmap();
-                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-
-                    mMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(location.latitude, location.longitude))
-                            .flat(true)
-                            .title("Driver")
-                            .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
-                }
-
-            }
-
-            @Override
-            public void onKeyExited(String key) {
-
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                if (!isDriverFound) {
-                    radius++;
-                    loadDriverLocation();
-                }
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
-
-
-    }
+//    private void loadDriverLocation() {
+//
+//        DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("driverAvailable");
+//        GeoFire gfdriver = new GeoFire(ref);
+//        Log.d(TAG, "loadDriverLocation:In " + mLastLocation);
+//        GeoQuery geoQuery = gfdriver.queryAtLocation(new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()), radius);
+//        geoQuery.removeAllListeners();
+//        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+//            @Override
+//            public void onKeyEntered(String key, GeoLocation location) {
+//                if (!isDriverFound) {
+//                    isDriverFound = true;
+//                    driverId = key;
+//                    Log.d(TAG, "onKeyEntered:driverFound: " + key);
+////                    Toast.makeText(getContext(), "DriverFound", Toast.LENGTH_SHORT).show();
+//                    int height = 100;
+//                    int width = 100;
+//                    BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(R.drawable.ic_truck);
+//                    Bitmap b = bitmapdraw.getBitmap();
+//                    Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//
+//                    mMap.addMarker(new MarkerOptions()
+//                            .position(new LatLng(location.latitude, location.longitude))
+//                            .flat(true)
+//                            .title("Driver")
+//                            .icon(BitmapDescriptorFactory.fromBitmap(smallMarker)));
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onKeyExited(String key) {
+//
+//            }
+//
+//            @Override
+//            public void onKeyMoved(String key, GeoLocation location) {
+//
+//            }
+//
+//            @Override
+//            public void onGeoQueryReady() {
+//                if (!isDriverFound) {
+//                    radius++;
+//                    loadDriverLocation();
+//                }
+//            }
+//
+//            @Override
+//            public void onGeoQueryError(DatabaseError error) {
+//
+//            }
+//        });
+//
+//
+//    }
 
     @Override
     public void onClick(View v) {
@@ -387,9 +388,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
 //        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
 //        mMap.animateCamera(CameraUpdateFactory.zoomTo(20));
         if (mIsOrderPlace) {
-            loadDriverLocation();
+//            loadDriverLocation();
             Log.d(TAG, "onLocationChanged:in " + mLastLocation);
         }
+
     }
 
     @Override
@@ -414,6 +416,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleA
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         Log.d(TAG, "InOnconnected");
+        onMapReady(mMap);
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }

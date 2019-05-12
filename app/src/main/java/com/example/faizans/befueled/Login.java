@@ -54,8 +54,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         mEmail = findViewById(R.id.input_email);
         mPassword = findViewById(R.id.input_password);
 //         Initialize Firebase Auth
-        mbtnfb = findViewById(R.id.btn_fb);
-        mbtnfb.setOnClickListener(this);
+//        mbtnfb = findViewById(R.id.btn_fb);
+//        mbtnfb.setOnClickListener(this);
         mAuth = FirebaseAuth.getInstance();
         myUserRef = FirebaseDatabase.getInstance().getReference().child("users");
 //         [END initialize_auth]
@@ -66,6 +66,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,new HomeFragment()).commit();
+        }
 
     }
 
@@ -101,7 +106,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
 
     public void signUp(View view) {
-        Intent intent = new Intent(this, SignUp.class);
+        Intent intent = new Intent(this, PhoneVerificationActivity.class);
         startActivity(intent);
     }
 
@@ -177,9 +182,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.btn_fb) {
-//            signInWithPhone();
-        }
+//        if (v.getId() == R.id.btn_fb) {
+////            signInWithPhone();
+//        }
     }
 }
 

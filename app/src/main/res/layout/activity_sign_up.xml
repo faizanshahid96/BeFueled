@@ -8,6 +8,15 @@
             type="com.example.faizans.befueled.SignUp" />
     </data>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/fragment_signUp_container"
+            android:visibility="gone"></FrameLayout>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -87,6 +96,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Telephone"
+                    android:enabled="false"
                     android:inputType="phone" />
             </android.support.design.widget.TextInputLayout>
 
@@ -134,4 +144,5 @@
 
 
     </ScrollView>
+    </RelativeLayout>
 </layout>

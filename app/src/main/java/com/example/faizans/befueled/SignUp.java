@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.faizans.befueled.Fragments.AddVehicleFragment;
 import com.example.faizans.befueled.Utils.FirebaseMethods;
 import com.example.faizans.befueled.databinding.ActivitySignUpBinding;
 import com.google.firebase.auth.FirebaseAuth;
@@ -36,6 +37,7 @@ public class SignUp extends AppCompatActivity {
     private FirebaseMethods mFirebaseMethods;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
+    private String mPhoneNumber;
 
 
     @Override
@@ -51,16 +53,15 @@ public class SignUp extends AppCompatActivity {
         activitySignUpBinding.setActivitySignup(this);
         mContext = SignUp.this;
         mFirebaseMethods = new FirebaseMethods(mContext);
-
+        mPhoneNumber = getIntent().getStringExtra("phonenumber");
         mFirstname = activitySignUpBinding.inputFirstname;
         mLastname = activitySignUpBinding.inputLastname;
         mEmail = activitySignUpBinding.inputEmail;
         mPhone = activitySignUpBinding.inputPhone;
+        mPhone.setText(mPhoneNumber);
         mPassword = activitySignUpBinding.inputPassword;
         mBtnRegister = activitySignUpBinding.buttonRegister;
-
-
-
+        findViewById(R.id.fragment_signUp_container).setVisibility(View.GONE);
         setupFirebaseAuth();
 
     }
@@ -90,7 +91,16 @@ public class SignUp extends AppCompatActivity {
 //                ,Toast.LENGTH_SHORT).show();
         if (checkInputs(email, firstname, password, phone, lastname)) {
             mFirebaseMethods.registerNewEmail(email, firstname, password, phone, lastname);
+//            mFirebaseMethods.addNewUser(email, firstname, lastname, phone);
+//            Bundle bundle = new Bundle();
+//            bundle.putBoolean("isFromSignUp",true);
+//            AddVehicleFragment addVehicleFragment = new AddVehicleFragment();
+//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_signUp_container, addVehicleFragment).commit();
+            Intent intent = new Intent(this, Login.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
         }
+
 
 
     }
@@ -106,7 +116,7 @@ public class SignUp extends AppCompatActivity {
             @Override
             public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
-
+                Log.d(TAG, "onAuthStateChanged: user" + user);
                 if (user != null) {
                     // User is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
@@ -158,8 +168,9 @@ public class SignUp extends AppCompatActivity {
     public void mainactivity(View view) {
 //        Intent intent = new Intent(this,MainActivity.class);
 //        startActivity(intent);
-        final ProgressDialog dialog = ProgressDialog.show(SignUp.this, "",
-                "Registering. Please wait...", true);
+
+//        final ProgressDialog dialog = ProgressDialog.show(SignUp.this, "",
+//                "Registering. Please wait...", true);
         init();
 //        dialog.dismiss();
     }

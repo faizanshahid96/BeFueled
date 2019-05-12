@@ -65,7 +65,7 @@ public class FirebaseMethods {
      * @param phone
      * @param lastname
      */
-    public void registerNewEmail(final String email, final String firstname, String password, long phone, String lastname){
+    public void registerNewEmail(final String email, final String firstname, String password, final long phone, final String lastname) {
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
@@ -86,6 +86,7 @@ public class FirebaseMethods {
 
 
                             userID = mAuth.getCurrentUser().getUid();
+                            addNewUser(email, firstname, lastname, phone);
                             Log.d(TAG, "onComplete: Authstate changed: " + userID);
                         }
                     }

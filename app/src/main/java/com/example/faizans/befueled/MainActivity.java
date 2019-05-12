@@ -26,11 +26,10 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.faizans.befueled.Fragments.SettingFragment;
-
-
 import com.example.faizans.befueled.Adapters.SectionsStatePagerAdapter;
+import com.example.faizans.befueled.Fragments.FinalFuelRequestFragment;
 import com.example.faizans.befueled.Fragments.MapFragment;
+import com.example.faizans.befueled.Fragments.SettingFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -47,7 +46,7 @@ import static com.example.faizans.befueled.Utils.Constants.ERROR_DIALOG_REQUEST;
 import static com.example.faizans.befueled.Utils.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION;
 import static com.example.faizans.befueled.Utils.Constants.PERMISSIONS_REQUEST_ENABLE_GPS;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, FinalFuelRequestFragment.GetMeMap {
 
     private static final String TAG = "Mainactivity";
     DrawerLayout drawer;
@@ -55,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private boolean mLocationPermissionGranted = false;
     private SectionsStatePagerAdapter mSectionsStatePagerAdapter;
     private FusedLocationProviderClient mFusedLocationClient;
-
+    private boolean mAtEnd = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
 
     }
-
 
     private void getLastKnownLocation() {
         Log.d(TAG, "getLastKnownLocation");
@@ -247,7 +245,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
-
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
 
@@ -287,6 +284,13 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (mAtEnd) {
+            finish();
+        } else
+            super.onBackPressed();
+    }
 
     private void signout() {
         AlertDialog dialog = new AlertDialog.Builder(mContext)
@@ -304,5 +308,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 .setNegativeButton(android.R.string.no, null)
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
+    }
+
+
+    @Override
+    public void mapAcquired() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MapFragment()).commit();
+        mAtEnd = true;
     }
 }

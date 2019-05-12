@@ -83,7 +83,7 @@ public class FuelRequestFragment extends Fragment implements View.OnClickListene
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.rb_two_hrs:
-                        FuelRequestInfo.setTimeFrame("2");
+                        FuelRequestInfo.setTimeFrame("180");
                         mQtyOfFuel.setEnabled(true);
                         break;
                     case R.id.rb_90_min:
@@ -91,7 +91,7 @@ public class FuelRequestFragment extends Fragment implements View.OnClickListene
                         mQtyOfFuel.setEnabled(true);
                         break;
                     case R.id.rb_one_hrs:
-                        FuelRequestInfo.setTimeFrame("1");
+                        FuelRequestInfo.setTimeFrame("60");
                         mQtyOfFuel.setEnabled(true);
                         break;
                 }
